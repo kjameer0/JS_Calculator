@@ -87,9 +87,7 @@ eqButton.addEventListener('click', function evaluate() {
             }
         }
         queue.innerText = '';
-        if (String(total).length > 15) {
-            total = Number.parseFloat(total).toExponential();
-        }
+        
         return val.innerText = String(total);
     }
 });
