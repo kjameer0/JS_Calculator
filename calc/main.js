@@ -10,27 +10,27 @@ const op = {
 for (let i = 0; i < buttons.length; i++) {
     let current = buttons[i];
     current.addEventListener('click', function but() {
-        let addedText = document.getElementsByTagName('h2')[i].textContent;
+        let addedText = document.getElementsByTagName('h2')[i].innerText;
         if (current.getAttribute('class') === 'number' || current.getAttribute('class') === 'dot') {
-            if (val.textContent.length > 15) {
-                val.textContent = '0';
+            if (val.innerText.length > 15) {
+                val.innerText = '0';
                 return alert('that is too big, man');
             }
-            if (op[val.textContent]) {
-                val.textContent = '';
+            if (op[val.innerText]) {
+                val.innerText = '';
             }
 
-            if (addedText === '0' && val.textContent === '0') {
-                val.textContent = '0';
+            if (addedText === '0' && val.innerText === '0') {
+                val.innerText = '0';
             }
-            else if (val.textContent === '0' && current.getAttribute('class') === 'number') {
-                val.textContent[0] = '';
-                val.textContent = addedText;
+            else if (val.innerText === '0' && current.getAttribute('class') === 'number') {
+                val.innerText[0] = '';
+                val.innerText = addedText;
             }
             else {
-                val.textContent += addedText;
+                val.innerText += addedText;
             }
-            if (val.textContent.includes('.')) {
+            if (val.innerText.includes('.')) {
                 dotB.disabled = true;
             } else {
                 dotB.disabled = false;
@@ -41,23 +41,23 @@ for (let i = 0; i < buttons.length; i++) {
 
 let clearButton = document.getElementById('bAC');
 clearButton.addEventListener('click', function () {
-    val.textContent = '0';
-    queue.textContent = '';
+    val.innerText = '0';
+    queue.innerText = '';
 });
 
 let operators = document.getElementsByClassName('operator');
 for (let j = 0; j < operators.length; j++) {
     let currentOp = operators[j];
     currentOp.addEventListener('click', function operate() {
-        if (!op[val.textContent]) {
-            if (val.textContent !== '0' && val.textContent !== '0.') {
-                queue.textContent += val.textContent;
-                queue.textContent += currentOp.textContent;
-                val.textContent = currentOp.textContent;
-            } else if (val.textContent === '0') {
-                queue.textContent += val.textContent;
-                queue.textContent += currentOp.textContent;
-                val.textContent = currentOp.textContent;
+        if (!op[val.innerText]) {
+            if (val.innerText !== '0' && val.innerText !== '0.') {
+                queue.innerText += val.innerText;
+                queue.innerText += currentOp.innerText;
+                val.innerText = currentOp.innerText;
+            } else if (val.innerText === '0') {
+                queue.innerText += val.innerText;
+                queue.innerText += currentOp.innerText;
+                val.innerText = currentOp.innerText;
             }
         }
     })
@@ -65,10 +65,10 @@ for (let j = 0; j < operators.length; j++) {
 
 let eqButton = document.getElementById('bEq');
 eqButton.addEventListener('click', function evaluate() {
-    queue.textContent += val.textContent;
+    queue.innerText += val.innerText;
 
     let endWithNum = /[0-9]$/;
-    if (queue.textContent && endWithNum.test(queue.textContent)) {
+    if (queue.innerText && endWithNum.test(queue.innerText)) {
 
         let opFun = {
             '+': function (x, y) { return x + y },
@@ -78,7 +78,7 @@ eqButton.addEventListener('click', function evaluate() {
         }
 
         let regex = /([0-9]+\.[0-9]+e\+[0-9]+)|([0-9]+\.[0-9]*)|[0-9]+|[\+\-\*\/]/g;
-        let path = queue.textContent.match(regex);
+        let path = queue.innerText.match(regex);
         let total = Number(path[0]);
         for (let i = 1; i < path.length; i++) {
             let current = path[i];
@@ -86,10 +86,10 @@ eqButton.addEventListener('click', function evaluate() {
                 total = opFun[`${current}`](total, Number(path[i + 1]));
             }
         }
-        queue.textContent = '';
+        queue.innerText = '';
         if (String(total).length > 15) {
             total = Number.parseFloat(total).toExponential();
         }
-        return val.textContent = String(total);
+        return val.innerText = String(total);
     }
 });
