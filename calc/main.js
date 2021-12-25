@@ -1,6 +1,7 @@
 let buttons = document.getElementsByTagName('button');
 let dotB = document.getElementById('b.');
 let val = document.getElementById('value');
+let eqClick = false;
 const op = {
     '+': '+',
     '-': '-',
@@ -11,7 +12,12 @@ for (let i = 0; i < buttons.length; i++) {
     let current = buttons[i];
     current.addEventListener('click', function but() {
         let addedText = document.getElementsByTagName('h2')[i].innerText;
+        
         if (current.getAttribute('class') === 'number' || current.getAttribute('class') === 'dot') {
+            if (eqClick) {
+                val.innerText = '';
+                eqClick = false;
+            }
             if (val.innerText.length > 15) {
                 val.innerText = '0';
                 return alert('that is too big, man');
@@ -43,12 +49,14 @@ let clearButton = document.getElementById('bAC');
 clearButton.addEventListener('click', function () {
     val.innerText = '0';
     queue.innerText = '';
+    eqClick = false;
 });
 
 let operators = document.getElementsByClassName('operator');
 for (let j = 0; j < operators.length; j++) {
     let currentOp = operators[j];
     currentOp.addEventListener('click', function operate() {
+        eqClick = false;
         if (!op[val.innerText]) {
             if (val.innerText !== '0' && val.innerText !== '0.') {
                 queue.innerText += val.innerText;
@@ -65,8 +73,8 @@ for (let j = 0; j < operators.length; j++) {
 
 let eqButton = document.getElementById('bEq');
 eqButton.addEventListener('click', function evaluate() {
+    eqClick = true;
     queue.innerText += val.innerText;
-
     let endWithNum = /[0-9]$/;
     if (queue.innerText && endWithNum.test(queue.innerText)) {
 
@@ -93,3 +101,4 @@ eqButton.addEventListener('click', function evaluate() {
         return val.innerText = String(total);
     }
 });
+
