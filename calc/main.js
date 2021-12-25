@@ -11,7 +11,6 @@ for (let i = 0; i < buttons.length; i++) {
     let current = buttons[i];
     current.addEventListener('click', function but() {
         let addedText = document.getElementsByTagName('h2')[i].textContent;
-
         if (current.getAttribute('class') === 'number' || current.getAttribute('class') === 'dot') {
             if (val.textContent.length > 15) {
                 val.textContent = '0';
