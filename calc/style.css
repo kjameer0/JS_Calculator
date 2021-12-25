@@ -29,7 +29,7 @@ body {
     display: grid;
     grid-template-rows: [row1-start] 25% [row1-end row2-start] ;
     grid-template-columns: [first] 20% [line2] 20% [line3] 20% [col4-start] 20% [five] 20% [end];
-    min-height:500px;
+    min-height:480px;
     min-width: 400px;
     height: 70vh;
     width: 40vw;
@@ -82,4 +82,5 @@ background-color: red;
 #value{
     color: black;
     font-size: 4rem;
+    
 }
