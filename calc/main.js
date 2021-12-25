@@ -101,4 +101,3 @@ eqButton.addEventListener('click', function evaluate() {
         return val.innerText = String(total);
     }
 });
-
