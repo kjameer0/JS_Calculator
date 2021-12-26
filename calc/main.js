@@ -8,83 +8,102 @@ const op = {
     '*': '*',
     '/': '/'
 };
-for (let i = 0; i < buttons.length; i++) {
-    let current = buttons[i];
-    current.addEventListener('click', function but() {
-        let addedText = document.getElementsByTagName('h2')[i].innerText;
-        
-        if (current.getAttribute('class') === 'number' || current.getAttribute('class') === 'dot') {
-            if (eqClick) {
-                val.innerText = '';
-                eqClick = false;
+function validateLength(val) {
+    if (val.innerText.length > 15) {
+        val.innerText = '0';
+        return alert('that is too big, man');
+    }
+}
+function checkIsOperation(val) {
+    if (op[val.innerText]) {
+        val.innerText = '';
+    }
+}
+function isNumOrDot(button) {
+    return button.getAttribute('class') === 'number' || button.getAttribute('class') === 'dot';
+}
+function eqClicked(hasBeenClicked) {
+    if (hasBeenClicked) {
+        val.innerText = '';
+        eqClick = false;
+    }
+}
+function isZero(val, added, button) {
+    if (added === '0' && val.innerText === '0') {
+        val.innerText = '0';
+    }
+    else if (val.innerText === '0' && button.getAttribute('class') === 'number') {
+        val.innerText[0] = '';
+        val.innerText = added;
+    }
+    else {
+        val.innerText += added;
+    }
+}
+function checkDotDisabled(button, val) {
+    if (val.innerText.includes('.')) {
+        button.disabled = true;
+    } else {
+        button.disabled = false;
+    }
+}
+function createNumButtons(buttons) {
+    let dotB = document.getElementById('b.');
+    let val = document.getElementById('value');
+    for (let i = 0; i < buttons.length; i++) {
+        let current = buttons[i];
+        current.addEventListener('click', function but() {
+            let addedText = document.getElementsByTagName('h2')[i].innerText;
+            if (isNumOrDot(current)) {
+                eqClicked(eqClick);
+                validateLength(val);
+                checkIsOperation(val);
+                isZero(val, addedText, current);
+                checkDotDisabled(dotB, val);
             }
-            if (val.innerText.length > 15) {
-                val.innerText = '0';
-                return alert('that is too big, man');
-            }
-            if (op[val.innerText]) {
-                val.innerText = '';
-            }
-
-            if (addedText === '0' && val.innerText === '0') {
-                val.innerText = '0';
-            }
-            else if (val.innerText === '0' && current.getAttribute('class') === 'number') {
-                val.innerText[0] = '';
-                val.innerText = addedText;
-            }
-            else {
-                val.innerText += addedText;
-            }
-            if (val.innerText.includes('.')) {
-                dotB.disabled = true;
-            } else {
-                dotB.disabled = false;
-            }
-        }
+        });
+    }
+}
+function createClear(val, queue, eqClick) {
+    let clearButton = document.getElementById('bAC');
+    clearButton.addEventListener('click', function () {
+        val.innerText = '0';
+        queue.innerText = '';
+        eqClick = false;
     });
 }
-
-let clearButton = document.getElementById('bAC');
-clearButton.addEventListener('click', function () {
-    val.innerText = '0';
-    queue.innerText = '';
-    eqClick = false;
-});
-
-let operators = document.getElementsByClassName('operator');
-for (let j = 0; j < operators.length; j++) {
-    let currentOp = operators[j];
-    currentOp.addEventListener('click', function operate() {
-        eqClick = false;
-        if (!op[val.innerText]) {
-            if (val.innerText !== '0' && val.innerText !== '0.') {
-                queue.innerText += val.innerText;
-                queue.innerText += currentOp.innerText;
-                val.innerText = currentOp.innerText;
-            } else if (val.innerText === '0') {
-                queue.innerText += val.innerText;
-                queue.innerText += currentOp.innerText;
-                val.innerText = currentOp.innerText;
+function checkVal(val,queue,currentOp){
+    if (val.innerText !== '0' && val.innerText !== '0.') {
+        queue.innerText += val.innerText;
+        queue.innerText += currentOp.innerText;
+        val.innerText = currentOp.innerText;
+    } else if (val.innerText === '0') {
+        queue.innerText += val.innerText;
+        queue.innerText += currentOp.innerText;
+        val.innerText = currentOp.innerText;
+    }
+}
+function createOpButton(op, val, queue) {
+    let operators = document.getElementsByClassName('operator');
+    for (let j = 0; j < operators.length; j++) {
+        let currentOp = operators[j];
+        currentOp.addEventListener('click', function operate() {
+            eqClick = false;
+            if (!op.hasOwnProperty(val.innerText)) {
+                checkVal(val, queue, currentOp);
             }
-        }
-    })
+        })
+    }
 }
 
-let eqButton = document.getElementById('bEq');
-eqButton.addEventListener('click', function evaluate() {
-    eqClick = true;
-    queue.innerText += val.innerText;
-    let endWithNum = /[0-9]$/;
+function numEnd(endWithNum, val, queue) {
+    if (endWithNum.test(val.innerText)) {
+        queue.innerText += val.innerText;
+    }
+}
+function validateEqual(val,queue,endWithNum,opFun){
     if (queue.innerText && endWithNum.test(queue.innerText)) {
-
-        let opFun = {
-            '+': function (x, y) { return x + y },
-            '-': function (a, b) { return a - b },
-            '*': function (c, d) { return c * d },
-            '/': function (e, f) { return e / f }
-        }
-
+        
         let regex = /([0-9]+\.[0-9]+e\+[0-9]+)|([0-9]+\.[0-9]*)|[0-9]+|[\+\-\*\/]/g;
         let path = queue.innerText.match(regex);
         let total = Number(path[0]);
@@ -100,4 +119,25 @@ eqButton.addEventListener('click', function evaluate() {
         }
         return val.innerText = String(total);
     }
+}
+let eqButton = document.getElementById('bEq');
+function createEqButton(val,queue){
+eqButton.addEventListener('click', function evaluate() {
+    eqClick = true;
+    let opFun = {
+        '+': function (x, y) { return x + y },
+        '-': function (a, b) { return a - b },
+        '*': function (c, d) { return c * d },
+        '/': function (e, f) { return e / f }
+    }
+    let endWithNum = /[0-9]$/;
+    numEnd(endWithNum,val,queue,eqClick);
+     validateEqual(val, queue, endWithNum,opFun);
 });
+}
+  
+
+createNumButtons(buttons);
+createClear(val, queue, eqClick);
+createOpButton(op, val, queue);
+createEqButton(val,queue);
